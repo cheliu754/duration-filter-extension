@@ -10,21 +10,24 @@
 
   // ---- Duration parsing ----
   function parseDurationToSeconds(text) {
-    // Supports: "1 min 53 s", "2 min", "59 s"
+    // Supports: "3 h 1 min 23 s", "1 min 53 s", "2 min", "59 s", etc.
     if (!text) return null;
     const t = text.toLowerCase().trim();
 
+    let hours = 0;
     let minutes = 0;
     let seconds = 0;
 
+    const hourMatch = t.match(/(\d+)\s*h/);
     const minMatch = t.match(/(\d+)\s*min/);
     const secMatch = t.match(/(\d+)\s*s/);
 
+    if (hourMatch) hours = parseInt(hourMatch[1], 10);
     if (minMatch) minutes = parseInt(minMatch[1], 10);
     if (secMatch) seconds = parseInt(secMatch[1], 10);
 
-    if (!minMatch && !secMatch) return null;
-    return minutes * 60 + seconds;
+    if (!hourMatch && !minMatch && !secMatch) return null;
+    return hours * 3600 + minutes * 60 + seconds;
   }
 
   // ---- DOM lookup helpers ----
@@ -150,6 +153,10 @@
     const flagged = [];
 
     for (const card of cards) {
+      // Only check duration within "Variant" sections, skip "Assessment instance" etc.
+      const sectionHeader = card.querySelector("h3");
+      if (!sectionHeader || sectionHeader.textContent.trim() !== "Variant") continue;
+
       const durationValueDiv = findDurationValueDivWithin(card);
       if (!durationValueDiv) continue;
 
