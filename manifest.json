@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Duration Cheat Detector",
+  "version": "3.0.0",
+  "description": "Flag durations below a configurable threshold (excluding 0) and accumulate a CSV report.",
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "Duration Cheat Detector",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
